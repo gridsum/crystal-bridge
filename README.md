@@ -1,4 +1,6 @@
-**构建状态:** ![](https://travis-ci.org/g0194776/crystal-bridge.svg?branch=feature%2Ffirst_edition)
+**构建状态:** ![](https://travis-ci.org/g0194776/crystal-bridge.svg?branch=feature%2Ffirst_edition) 
+
+**代码覆盖度:** [![Coverage Status](https://coveralls.io/repos/github/g0194776/crystal-bridge/badge.svg?branch=master)](https://coveralls.io/github/g0194776/crystal-bridge?branch=feature%2Ffirst_edition)
 
 
 # 水晶桥(Crystal Bridge)
