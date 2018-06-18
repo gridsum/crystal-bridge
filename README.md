@@ -1,3 +1,6 @@
+**构建状态:** ![](https://travis-ci.org/g0194776/crystal-bridge.svg?branch=feature%2Ffirst_edition)
+
+
 # 水晶桥(Crystal Bridge)
 
 ## 简介
