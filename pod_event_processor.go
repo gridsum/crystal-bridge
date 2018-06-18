@@ -99,7 +99,8 @@ func processPodEvent(e *PODEvent) {
 		}
 	} else {
 		if e.Status == POD_ADD || (e.Status == POD_UPDATE && e.HasAnnotation) {
-			pmm := &PODMetricsMonitor{Event: *e, Ctx: context.Background()}
+			ctx, cancel := context.WithCancel(context.Background())
+			pmm := &PODMetricsMonitor{Event: *e, Ctx: ctx, Cancel: cancel}
 			monitoringPods[e.Pod.UID] = pmm
 			pmm.Start()
 		}
