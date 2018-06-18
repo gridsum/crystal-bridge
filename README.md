@@ -36,3 +36,8 @@ godep restore && go build
 ```
 
 如果你还没有安装`godep`，请[点击这里](https://github.com/tools/godep)进入godep主页，以便进行安装。代码根目录下的`find_missed_packages_for_godep.sh`文件主要用于解决第一次使用godep工具，而无法正常执行godep save命令的问题。
+
+如果你也遇到了此类问题，请尝试使用命令行执行此文件，以便自动下载所有godep所需要的并且缺失的包。
+```shell
+./find_missed_packages_for_godep.sh
+```
