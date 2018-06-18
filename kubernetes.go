@@ -111,6 +111,10 @@ func syncPods() {
 			handlePodModify(obj.(*corev1.Pod), POD_ADD)
 		},
 		UpdateFunc: func(oldObj, newObj interface{}) {
+			if oldObj.(*corev1.Pod).String() == newObj.(*corev1.Pod).String() {
+				//NOT REALLY CHANGED.
+				return
+			}
 			log.Debugf("informer UPDATE event received: %s", newObj.(*corev1.Pod).Name)
 			handlePodModify(newObj.(*corev1.Pod), POD_UPDATE)
 		},
