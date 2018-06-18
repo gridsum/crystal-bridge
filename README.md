@@ -27,3 +27,13 @@
 
 # 源代码管理方式
 此项目采取[Git workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow)的工作流分支管理方式，master分支永远保存已发布的最新release代码，develop分支用于保存活跃的开发版本，feature角色的分支主要用于开发新功能，等等，也请后续使用并跟进此项目的人知晓。
+
+# 如何编译此项目?
+我们使用`godep`工具来对此项目做依赖包管理，请使用如下脚本进行godep的包还原以及项目编译工作。
+
+```go
+./find_missed_packages_for_godep.sh && godep restore && go build
+
+```
+
+如果你还没有安装`godep`，请[点击这里](https://github.com/tools/godep)进入godep主页，以便进行安装。代码根目录下的`find_missed_packages_for_godep.sh`文件主要用于解决第一次使用godep工具，而无法正常执行godep save命令的问题。
