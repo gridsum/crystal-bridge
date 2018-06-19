@@ -134,3 +134,12 @@ func handlePodModify(pod *corev1.Pod, status PODStatus) {
 	//directly send it to the channel without any filtering steps.
 	eventChan <- pe
 }
+
+func updatePod(e *PODEvent) {
+	_, err := k8sClient.CoreV1().Pods(e.Pod.Name).Update(e.Pod)
+	if err != nil {
+		log.Errorf("Failed to update POD's annotation to the remote Kubernetes cluster, error: %s", err.Error())
+	} else {
+		log.Infof("Successfully updated POD's annotation (%s) by automatic Prometheus metrics disconvery.", e.Pod.Namespace)
+	}
+}

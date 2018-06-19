@@ -23,6 +23,7 @@ func initializeArg() *CommandLineArgs {
 	arg := CommandLineArgs{}
 	flag.IntVar(&arg.LogLevel, "l", 2, "log level.")
 	flag.StringVar(&arg.RemotePrometheusPushGWAddr, "gw", "", "the accessabile address of remote prometheus push gateway.")
+	flag.StringVar(&arg.RemotePrometheusPushGWAddrHttpTimeout, "gwto", "30s", "timeout to push data to the remote Prometheus GW.")
 	flag.StringVar(&arg.AnnotationPrefixTag, "tag", "io.collectbeat.metrics", "a prefix value used for matching POD's annotations.")
 	flag.IntVar(&arg.PrometheusDataSyncBufferSize, "syncbuffer", 32, "length of buffered queue size for syncing data to the remote Prometheus push gateway")
 	flag.StringVar(&arg.Host, "host", "", "hostname, usually be set as current machine's IP address.")
@@ -40,15 +41,15 @@ func initializeArg() *CommandLineArgs {
 }
 
 type CommandLineArgs struct {
-	LogLevel                   int
-	RemotePrometheusPushGWAddr string
-	//current machine's hostname (IP ADDRESS)
-	Host                         string
-	AnnotationPrefixTag          string
-	FechingInterval              string
-	FechingTimeout               string
-	LabeledNamespace             string
-	KubernetesAddress            string
-	KubernetesBearerToken        string
-	PrometheusDataSyncBufferSize int
+	LogLevel                              int
+	RemotePrometheusPushGWAddr            string
+	RemotePrometheusPushGWAddrHttpTimeout string
+	Host                                  string //current machine's hostname (IP ADDRESS)
+	AnnotationPrefixTag                   string
+	FechingInterval                       string
+	FechingTimeout                        string
+	LabeledNamespace                      string
+	KubernetesAddress                     string
+	KubernetesBearerToken                 string
+	PrometheusDataSyncBufferSize          int
 }

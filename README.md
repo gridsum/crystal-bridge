@@ -34,7 +34,7 @@
 我们使用`godep`工具来对此项目做依赖包管理，请使用如下脚本进行godep的包还原以及项目编译工作。
 
 ```shell
-godep restore && go build
+godep restore -v && go build
 ```
 
 如果你还没有安装`godep`，请[点击这里](https://github.com/tools/godep)进入godep主页，以便进行安装。代码根目录下的`find_missed_packages_for_godep.sh`文件主要用于解决第一次使用godep工具，而无法正常执行godep save命令的问题。
