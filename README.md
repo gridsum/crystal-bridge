@@ -33,6 +33,39 @@ io.collectbeat.metrics/namespace=default
 io.collectbeat.metrics/type=prometheus
 ```
 
+```text
+
+
+           +------------------------------------------------------------+
+           |                                                            |
+           |                                                            |
+           |                        Prometheus                          |
+           |                                                            |
+           |                                                            |
+           +------------------------------------------+-------------+---+
+                                                      |             |
+                                        Collect Metrics             |
+                                                      |             |
+                                                      |             |
+          +---------------+  PUSH metrics   +---------v---------+   |
+          |Crystal Bridge +----------------->Prometheus Push GW |   | Collect Container's
+          +----+------+---+                 +-------------------+   | System Performance Metrics
+               ^      |                                             |
+               |      |                                             |
+               |      |UPDATE                                       |
+Pod Annotation |      |POD's Annotation                             |
+Automatic Discovery   |                                             |
+               |      |                                             |
+           +---+------v---------------------------------------------v---+
+           |                                                            |
+           |                                                            |
+           |                      Kubernetes Cluster                    |
+           |                                                            |
+           |                                                            |
+           +------------------------------------------------------------+
+
+```
+
 水晶桥(Crystal Bridge)在部署上，依旧需要采取Daemonset的方式在Kubernetes集群中进行部署，在此项目完成后，我们会在github中直接给出Dockerfile以及部署到Kubernetes中所需要的Daemonset Yaml格式描述文件。
 
 eBay Collectbeat所提供的Annotation字段详细描述如下:
