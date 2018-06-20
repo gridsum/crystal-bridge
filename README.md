@@ -15,23 +15,6 @@
 
 而从用户容器程序暴露metrics接口的技术方案上，我们计划完全支持eBay在Collectbeat上所提供的技术方案，采取动态发现资源Annotation的信息来进行数据获取的方案。所以说，水晶桥(Crystal Bridge)的技术方案相比Collectbeat或者Metricbeat都会简单很多，足够轻量。
 
-值得一提的是，除了POD级别Annotation的自动发现之外，水晶桥(Crystal Bridge)还将会额外完成一些更棒的工作。比如我们一直在考虑如何将Prometheus和Grafana联合起来，通过一种自动化的方式，将在Annotation中获取到的自定义数据指标动态地在远端Grafana中进行创建，这样一来用户便能够直接从Grafana中看到针对同样应用程序的两类图表信息:
-- 基础性能数据信息
-  - CPU
-  - 内存
-  - 网络
-  - I/O
-- 自定义业务指标数据
-
-在针对POD级别的Annotation自动发现之后，水晶桥(Crystal Bridge)将会尝试对符合条件的POD Annotation进行自动并且持续的更新，加入其自定义业务指标数据解析后的相关信息，这样方式的元数据(Metadata)自动化注入工作，将会为后续自动在Grafana中创建图表进行直接的支持。注入的数据看起来类似如下的样子:
-
-```text
-Annotations:
-io.auto-tagged.metrics-info=application_test_timer,SUMMARY;application_test1,GAUGE;application_test2,GAUGE;application_test3,GAUGE;application_test_histogram,SUMMARY;
-io.collectbeat.metrics/endpoints=:30999/metrics
-io.collectbeat.metrics/namespace=default
-io.collectbeat.metrics/type=prometheus
-```
 
 ```text
 
@@ -64,6 +47,24 @@ Automatic Discovery   |                                             |
            |                                                            |
            +------------------------------------------------------------+
 
+```
+
+值得一提的是，除了POD级别Annotation的自动发现之外，水晶桥(Crystal Bridge)还将会额外完成一些更棒的工作。比如我们一直在考虑如何将Prometheus和Grafana联合起来，通过一种自动化的方式，将在Annotation中获取到的自定义数据指标动态地在远端Grafana中进行创建，这样一来用户便能够直接从Grafana中看到针对同样应用程序的两类图表信息:
+- 基础性能数据信息
+  - CPU
+  - 内存
+  - 网络
+  - I/O
+- 自定义业务指标数据
+
+在针对POD级别的Annotation自动发现之后，水晶桥(Crystal Bridge)将会尝试对符合条件的POD Annotation进行自动并且持续的更新，加入其自定义业务指标数据解析后的相关信息，这样方式的元数据(Metadata)自动化注入工作，将会为后续自动在Grafana中创建图表进行直接的支持。注入的数据看起来类似如下的样子:
+
+```text
+Annotations:
+io.auto-tagged.metrics-info=application_test_timer,SUMMARY;application_test1,GAUGE;application_test2,GAUGE;application_test3,GAUGE;application_test_histogram,SUMMARY;
+io.collectbeat.metrics/endpoints=:30999/metrics
+io.collectbeat.metrics/namespace=default
+io.collectbeat.metrics/type=prometheus
 ```
 
 水晶桥(Crystal Bridge)在部署上，依旧需要采取Daemonset的方式在Kubernetes集群中进行部署，在此项目完成后，我们会在github中直接给出Dockerfile以及部署到Kubernetes中所需要的Daemonset Yaml格式描述文件。
