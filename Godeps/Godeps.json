@@ -13,6 +13,10 @@
 			"Rev": "de5bf2ad457846296e2031421a34e2568e304e35"
 		},
 		{
+			"ImportPath": "github.com/beorn7/perks/quantile",
+			"Rev": "3a771d992973f24aa725d07868b467d1ddfceafb"
+		},
+		{
 			"ImportPath": "github.com/davecgh/go-spew/spew",
 			"Comment": "v1.1.0-12-g8991bc2",
 			"Rev": "8991bc29aa16c548c550c7ff78260e27b9ab7c73"
@@ -163,6 +167,11 @@
 			"Rev": "0646ccaebea1ed1539efcab30cae44019090093f"
 		},
 		{
+			"ImportPath": "github.com/prometheus/client_golang/prometheus",
+			"Comment": "v0.9.0-pre1-104-gfaf4ec3",
+			"Rev": "faf4ec335fe01ae5a6a0eaa34a5a9333bfbd1a30"
+		},
+		{
 			"ImportPath": "github.com/prometheus/client_model/go",
 			"Comment": "model-0.0.2-16-g99fa1f4",
 			"Rev": "99fa1f4be8e564e8a6b613da7fa6f46c9edafc6c"
@@ -178,6 +187,22 @@
 		{
 			"ImportPath": "github.com/prometheus/common/model",
 			"Rev": "7600349dcfe1abd18d72d3a1770870d9800a7801"
+		},
+		{
+			"ImportPath": "github.com/prometheus/procfs",
+			"Rev": "94663424ae5ae9856b40a9f170762b4197024661"
+		},
+		{
+			"ImportPath": "github.com/prometheus/procfs/internal/util",
+			"Rev": "94663424ae5ae9856b40a9f170762b4197024661"
+		},
+		{
+			"ImportPath": "github.com/prometheus/procfs/nfs",
+			"Rev": "94663424ae5ae9856b40a9f170762b4197024661"
+		},
+		{
+			"ImportPath": "github.com/prometheus/procfs/xfs",
+			"Rev": "94663424ae5ae9856b40a9f170762b4197024661"
 		},
 		{
 			"ImportPath": "github.com/sirupsen/logrus",

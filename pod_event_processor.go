@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/common/expfmt"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
@@ -25,6 +26,8 @@ var (
 	monitoringPods       map[types.UID]*PODMetricsMonitor
 	lock                 *sync.Mutex
 	parser               *expfmt.TextParser
+	fetchSucceedCounter  = prometheus.NewCounter(prometheus.CounterOpts{Name: "fetch_prometheus_metrics_succeed_count_total", Help: "Total count of successful fetch the remote Prometheus metric endpoints."})
+	fetchFailedCounter   = prometheus.NewCounter(prometheus.CounterOpts{Name: "fetch_prometheus_metrics_failed_count_total", Help: "Total count of failed fetching the remote Prometheus metric endpoints."})
 )
 
 type PrometheusData struct {
@@ -75,29 +78,40 @@ func doFetch(m *PODMetricsMonitor) {
 	//m.Event.Endpoints support ONLY one address by now.
 	req, err := http.NewRequest("GET", fmt.Sprintf("http://%s%s", m.Event.Pod.Status.PodIP, m.Event.Endpoints), nil)
 	if err != nil {
+		fetchFailedCounter.Inc()
 		log.Errorf("[Fetching Metric] Failed to fetch POD's metric, error: %s", err.Error())
 		return
 	}
 	rsp, err := m.client.Do(req)
 	if err != nil {
+		fetchFailedCounter.Inc()
 		log.Errorf("[Fetching Metric] Failed to fetch POD's metric, error: %s", err.Error())
 		return
 	}
 	defer rsp.Body.Close()
 	if rsp.StatusCode != http.StatusOK {
+		fetchFailedCounter.Inc()
 		log.Errorf("[Fetching Metric] Failed to fetch POD's metric, HTTP response status code: %d", rsp.StatusCode)
 		return
 	}
 	data, err := ioutil.ReadAll(rsp.Body)
 	if err != nil {
+		fetchFailedCounter.Inc()
 		log.Errorf("[Fetching Metric] Failed to read HTTP response body: %s", err.Error())
 		return
 	}
+	fetchSucceedCounter.Inc()
 	sendMessage(&m.Event, data, false)
 }
 
 func initKubernetesPODEventProcessor(eventChan chan *PODEvent) chan *PrometheusData {
 	log.Infoln("Initializing Kubernetes POD's event processor...")
+	prometheus.MustRegister(fetchSucceedCounter)
+	prometheus.MustRegister(fetchFailedCounter)
+	http.Handle("/metrics", prometheus.Handler())
+	go func() {
+		log.Fatal(http.ListenAndServe(":36000", nil))
+	}()
 	if prometheusOutputChan == nil {
 		prometheusOutputChan = make(chan *PrometheusData, args.PrometheusDataSyncBufferSize)
 	}
