@@ -95,3 +95,51 @@ godep restore -v && go build
 ```shell
 ./find_missed_packages_for_godep.sh
 ```
+
+# 如何使用水晶桥?
+我们提供了两种运行水晶桥的方案:
+- 直接执行二进制可执行文件，参数如下
+
+```shell
+./crystal-bridge -help
+Usage of /usr/bin/crystal-bridge:
+  -alsologtostderr
+    	log to standard error as well as files
+  -fi string
+    	fetching interval (default "1m")
+  -ft string
+    	fetching timeout (default "3s")
+  -gw string
+    	the accessabile address of remote prometheus push gateway.
+  -gwto string
+    	timeout to push data to the remote Prometheus GW. (default "30s")
+  -host string
+    	hostname, usually be set as current machine's IP address.
+  -k8saddr string
+    	remote Kubernetes URL. e.g. http://xxx.xxx.xxx.xxx:8080
+  -k8sbt string
+    	Kubernetes bearer token
+  -l int
+    	log level. (default 2)
+  -lns string
+    	labeled namespace on the POD's annotation. (default "3s")
+  -log_backtrace_at value
+    	when logging hits line file:N, emit a stack trace
+  -log_dir string
+    	If non-empty, write log files in this directory
+  -logtostderr
+    	log to standard error instead of files
+  -stderrthreshold value
+    	logs at or above this threshold go to stderr
+  -syncbuffer int
+    	length of buffered queue size for syncing data to the remote Prometheus push gateway (default 32)
+  -tag string
+    	a prefix value used for matching POD's annotations. (default "io.collectbeat.metrics")
+```
+
+- 采用Docker容器的方式启动，我们提供了最为精简的Docker Image
+
+```shell
+docker pull g0194776/crystal-bridge
+docker run -it --rm -p 36000:36000 g0194776/crystal-bridge
+```
