@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	log "github.com/sirupsen/logrus"
+	"os"
 )
 
 func main() {
@@ -35,6 +36,14 @@ func initializeArg() *CommandLineArgs {
 	flag.Parse()
 
 	fmt.Println("Initializing logger...")
+	if arg.Host == "" {
+		arg.Host = os.Getenv("HOST_IP")
+		//still not set.
+		if arg.Host == "" {
+			log.Fatal("Argument \"host\" CANNOT be null.")
+		}
+	}
+	fmt.Printf("Host: %s\n", arg.Host)
 	//minimum level to log.
 	log.SetLevel(log.Level(arg.LogLevel))
 	return &arg

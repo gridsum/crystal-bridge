@@ -1,0 +1,34 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: crystal-bridge
+  namespace: default
+  labels:
+    k8s-app: crystal-bridge
+spec:
+  template:
+    metadata:
+      labels:
+        k8s-app: crystal-bridge
+        name: crystal-bridge
+      annotations:
+        io.collectbeat.metrics/endpoints: ":36000/metrics"
+        io.collectbeat.metrics/namespace: "default"
+        io.collectbeat.metrics/type: "prometheus"
+    spec:
+      containers:
+      - image: g0194776/crystal-bridge:v1.0.2
+        name: crystal-bridge
+        imagePullPolicy: Always
+        env:
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        ports:
+          - containerPort: 36000
+            hostPort: 36000
+        args:
+        - "-l=${log_level}"
+        - "-k8saddr=${k8s_addr}"
+        - "-gw=${gateway_addr}"
