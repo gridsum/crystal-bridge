@@ -98,6 +98,7 @@ func syncPods() {
 				return k8sClient.CoreV1().Pods("").List(options)
 			},
 			WatchFunc: func(options metav1.ListOptions) (watch.Interface, error) {
+				options.FieldSelector = "spec.nodeName=" + args.Host
 				return k8sClient.CoreV1().Pods("").Watch(options)
 			},
 		},
@@ -136,7 +137,7 @@ func handlePodModify(pod *corev1.Pod, status PODStatus) {
 }
 
 func updatePod(e *PODEvent) {
-	_, err := k8sClient.CoreV1().Pods(e.Pod.Name).Update(e.Pod)
+	_, err := k8sClient.CoreV1().Pods(e.Pod.Namespace).Update(e.Pod)
 	if err != nil {
 		log.Errorf("Failed to update POD's annotation to the remote Kubernetes cluster, error: %s", err.Error())
 	} else {
