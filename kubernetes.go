@@ -3,6 +3,7 @@ package main
 import (
 	log "github.com/sirupsen/logrus"
 	corev1 "k8s.io/api/core/v1"
+	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/watch"
@@ -26,14 +27,23 @@ var (
 
 type PODStatus int
 type PODEvent struct {
-	Pod              *corev1.Pod
-	Status           PODStatus
-	MetricType       string
-	Endpoints        string
-	FechingInterval  string
-	FechingTimeout   string
-	LabeledNamespace string
-	HasAnnotation    bool
+	Pod                       *corev1.Pod
+	Status                    PODStatus
+	MetricType                string
+	Endpoints                 string
+	FechingInterval           string
+	FechingTimeout            string
+	LabeledNamespace          string
+	HasAnnotation             bool
+	NeededAppendingAnnotation string
+}
+
+func (e *PODEvent) UpdateAnnotation() {
+	if e.NeededAppendingAnnotation == "" {
+		delete(e.Pod.Annotations, automaticTaggedAnnotationKey)
+	} else {
+		e.Pod.Annotations[automaticTaggedAnnotationKey] = e.NeededAppendingAnnotation
+	}
 }
 
 func (e *PODEvent) ParseAnnotation() {
@@ -137,10 +147,17 @@ func handlePodModify(pod *corev1.Pod, status PODStatus) {
 }
 
 func updatePod(e *PODEvent) {
-	_, err := k8sClient.CoreV1().Pods(e.Pod.Namespace).Update(e.Pod)
+	newPod, err := k8sClient.CoreV1().Pods(e.Pod.Namespace).Get(e.Pod.Name, meta_v1.GetOptions{})
+	if err != nil {
+		log.Errorf("Cannot update POD: %s to newest status, error: %s", e.Pod.Name, err.Error())
+		return
+	}
+	e.Pod = newPod
+	e.UpdateAnnotation()
+	_, err = k8sClient.CoreV1().Pods(e.Pod.Namespace).Update(e.Pod)
 	if err != nil {
 		log.Errorf("Failed to update POD's annotation to the remote Kubernetes cluster, error: %s", err.Error())
 	} else {
-		log.Infof("Successfully updated POD's annotation (%s) by automatic Prometheus metrics disconvery.", e.Pod.Namespace)
+		log.Infof("Successfully updated POD's annotation (%s) by automatic Prometheus metrics disconvery.", e.Pod.Name)
 	}
 }

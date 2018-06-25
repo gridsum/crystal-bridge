@@ -1,0 +1,13 @@
+# Build customization
+builds:
+  - binary: crystal-bridge
+    goos:
+      - windows
+      - darwin
+      - linux
+    goarch:
+      - amd64
+
+# Archive customization
+archive:
+  format: tar.gz
