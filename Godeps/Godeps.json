@@ -1,7 +1,7 @@
 {
-	"ImportPath": "github.com/g0194776/crystal-bridge",
+	"ImportPath": "github.com/gridsum/crystal-bridge",
 	"GoVersion": "go1.9",
-	"GodepVersion": "v79",
+	"GodepVersion": "v80",
 	"Deps": [
 		{
 			"ImportPath": "github.com/PuerkitoBio/purell",

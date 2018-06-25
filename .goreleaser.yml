@@ -11,3 +11,23 @@ builds:
 # Archive customization
 archive:
   format: tar.gz
+
+dockers:
+  -
+    # GOOS of the built binary that should be used.
+    goos: linux
+    # GOARCH of the built binary that should be used.
+    goarch: amd64
+    # GOARM of the built binary that should be used.
+    goarm: ''
+    # Name of the built binary that should be used.
+    binary: crystal-bridge
+    # Docker image name.
+    image: g0194776/crystal-bridge
+    # Path to the Dockerfile (from the project root).
+    dockerfile: Dockerfile
+    # Path to the Dockerfile (from the project root).
+    tag_templates:
+    - "{{ .Tag }}"
+    - latest
+
