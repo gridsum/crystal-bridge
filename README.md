@@ -140,3 +140,7 @@ Usage of /usr/bin/crystal-bridge:
 docker pull g0194776/crystal-bridge
 docker run -it --rm -p 36000:36000 g0194776/crystal-bridge
 ```
+
+# 第一版实现的效果
+下图是水晶桥（Crystal Bridge）部署后配合Grafana的效果图。
+![image](https://github.com/gridsum/crystal-bridge/blob/master/final.png) 
