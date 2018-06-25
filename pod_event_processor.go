@@ -25,7 +25,6 @@ var (
 	prometheusOutputChan chan *PrometheusData
 	monitoringPods       map[types.UID]*PODMetricsMonitor
 	lock                 *sync.Mutex
-	parser               *expfmt.TextParser
 	fetchSucceedCounter  = prometheus.NewCounter(prometheus.CounterOpts{Name: "fetch_prometheus_metrics_succeed_count_total", Help: "Total count of successful fetch the remote Prometheus metric endpoints."})
 	fetchFailedCounter   = prometheus.NewCounter(prometheus.CounterOpts{Name: "fetch_prometheus_metrics_failed_count_total", Help: "Total count of failed fetching the remote Prometheus metric endpoints."})
 )
@@ -75,8 +74,11 @@ func (m *PODMetricsMonitor) Start() {
 }
 
 func doFetch(m *PODMetricsMonitor) {
+	url := fmt.Sprintf("http://%s%s", m.Event.Pod.Status.PodIP, m.Event.Endpoints)
+	log.Debugf("%#v", m.Event.Pod.Status)
+	log.Debugf("Preparing to fetch metrics URL: %s, POD IP: %s", url, m.Event.Pod.Status.PodIP)
 	//m.Event.Endpoints support ONLY one address by now.
-	req, err := http.NewRequest("GET", fmt.Sprintf("http://%s%s", m.Event.Pod.Status.PodIP, m.Event.Endpoints), nil)
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		fetchFailedCounter.Inc()
 		log.Errorf("[Fetching Metric] Failed to fetch POD's metric, error: %s", err.Error())
@@ -116,7 +118,6 @@ func initKubernetesPODEventProcessor(eventChan chan *PODEvent) chan *PrometheusD
 		prometheusOutputChan = make(chan *PrometheusData, args.PrometheusDataSyncBufferSize)
 	}
 	lock = &sync.Mutex{}
-	parser = &expfmt.TextParser{}
 	monitoringPods = make(map[types.UID]*PODMetricsMonitor)
 	go readPodEvents(eventChan)
 	return prometheusOutputChan
@@ -159,6 +160,10 @@ func processPodEvent(e *PODEvent) {
 		}
 	} else {
 		if e.Status == POD_ADD || (e.Status == POD_UPDATE && e.HasAnnotation) {
+			if e.Pod.Status.PodIP == "" {
+				log.Debugf("Ignored POD \"%s\" without any IP.", e.Pod.Name)
+				return
+			}
 			ctx, cancel := context.WithCancel(context.Background())
 			pmm := &PODMetricsMonitor{Event: *e, Ctx: ctx, Cancel: cancel}
 			monitoringPods[e.Pod.UID] = pmm
@@ -211,6 +216,7 @@ func sendMessage(e *PODEvent, data []byte, needDelete bool) {
 
 func needUpdateAnnotation(e *PODEvent, obj *PrometheusData) (bool, error) {
 	var err error
+	parser := expfmt.TextParser{}
 	metrics, err := parser.TextToMetricFamilies(bytes.NewReader(obj.RspData))
 	if err != nil {
 		return false, err
@@ -225,11 +231,7 @@ func needUpdateAnnotation(e *PODEvent, obj *PrometheusData) (bool, error) {
 	oldAnnotatedStr := e.Pod.Annotations[automaticTaggedAnnotationKey]
 	newAnnotatedStr := sb.String()
 	if oldAnnotatedStr != newAnnotatedStr {
-		if newAnnotatedStr == "" {
-			delete(e.Pod.Annotations, automaticTaggedAnnotationKey)
-		} else {
-			e.Pod.Annotations[automaticTaggedAnnotationKey] = newAnnotatedStr
-		}
+		e.NeededAppendingAnnotation = newAnnotatedStr
 		return true, nil
 	}
 	return false, nil
