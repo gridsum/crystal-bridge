@@ -16,7 +16,7 @@ dockers:
   -
     image: g0194776/crystal-bridge
     # Path to the Dockerfile (from the project root).
-    dockerfile: Dockerfile
     tag_templates:
-    - "v{{ .Tag }}"
+    - "{{ .Tag }}"
+    - latest
 
