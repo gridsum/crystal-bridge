@@ -11,3 +11,10 @@ builds:
 # Archive customization
 archive:
   format: tar.gz
+
+dockers:
+  -
+    image: g0194776/crystal-bridge
+    # Path to the Dockerfile (from the project root).
+    dockerfile: Dockerfile
+
