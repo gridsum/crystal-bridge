@@ -1,6 +1,6 @@
 # 水晶桥(Crystal Bridge)
 
-![](https://travis-ci.org/g0194776/crystal-bridge.svg?branch=master) [![Coverage Status](https://coveralls.io/repos/github/g0194776/crystal-bridge/badge.svg?branch=master)](https://coveralls.io/github/g0194776/crystal-bridge?branch=master)
+![](https://travis-ci.org/gridsum/crystal-bridge.svg?branch=master) [![Coverage Status](https://coveralls.io/repos/github/gridsum/crystal-bridge/badge.svg?branch=master)](https://coveralls.io/github/gridsum/crystal-bridge?branch=master)
 
 ## 简介
 水晶桥是一个非常轻量级的解决方案，主要用于桥接Kubernetes上POD所暴露的metrics信息，并将收集到的数据定期推送到远程所支持的Prometheus Push Gateway中。这个设计思路在很多方面都受到了eBay所提供的[Collectbeat](https://github.com/eBay/collectbeat)中部分功能的启发，但考虑到Metricbeat较为臃肿，并且将后端存储绑定到ElasticSearch并不会对Grafana的图表数据产生较好的用户体验，所以经过我的考虑，决定还是要将收集到的用户数据(Metrics)推送到Prometheus中进行统一的存储和数据计算。
